@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .dashboard { max-width: 800px; margin: auto; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 10px; border: 1px solid #ddd; text-align: center; }
+    .button { padding: 5px 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+    .button:disabled { background-color: #aaa; }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <h1>Video Conversion Test Dashboard</h1>
+    <button class="button" onclick="runTestSuite()">Run Test Suite</button>
+    <button class="button" onclick="exportCSV()">Export Results as CSV</button>
+    <table>
+      <thead>
+        <tr>
+          <th>Test Cases</th>
+          <th>Test Description</th>
+          <th>Status</th>
+          <th>Result</th>
+        </tr>
+      </thead>
+      <tbody id="test-table-body">
+        <tr>
+          <td><button class="button" onclick="runPositiveTest()">Positive Test - MP4 to AVI</button></td>
+          <td>Convert MP4 to AVI with HD 720p Resolution</td>
+          <td id="status-positive">Not Started</td>
+          <td id="result-positive"></td>
+        </tr>
+        <tr>
+          <td><button class="button" onclick="runNegativeTest1()">Negative Test 1 - YouTube Link</button></td>
+          <td>Attempt to upload YouTube URL</td>
+          <td id="status-negative1">Not Started</td>
+          <td id="result-negative1"></td>
+        </tr>
+        <tr>
+          <td><button class="button" onclick="runNegativeTest2()">Negative Test 2 - Large File Upload</button></td>
+          <td>Attempt to upload a file larger than 4GB</td>
+          <td id="status-negative2">Not Started</td>
+          <td id="result-negative2"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const testCases = [
+      { id: "positive", name: "Positive Test - MP4 to AVI", description: "Convert MP4 to AVI with HD 720p Resolution" },
+      { id: "negative1", name: "Negative Test 1 - YouTube Link", description: "Attempt to upload YouTube URL" },
+      { id: "negative2", name: "Negative Test 2 - Large File Upload", description: "Attempt to upload a file larger than 4GB" }
+    ];
+
+    const testResults = {};
+
+    function updateTestStatus(testId, status, result = "") {
+      document.getElementById(`status-${testId}`).textContent = status;
+      document.getElementById(`result-${testId}`).textContent = result;
+    }
+
+    async function runPositiveTest() {
+      updateTestStatus("positive", "Running");
+      try {
+        const response = await fetch('/api/run-positive-test', { method: 'POST' });
+        const result = await response.json();
+        testResults["positive"] = result;
+        updateTestStatus("positive", result.status === "Unexpected Result" ? "Fail" : result.status, result.description);
+      } catch (error) {
+        updateTestStatus("positive", "Fail", error.message);
+      }
+    }
+
+    async function runNegativeTest1() {
+      updateTestStatus("negative1", "Running");
+      try {
+        const response = await fetch('/api/run-negative-test-1', { method: 'POST' });
+        const result = await response.json();
+        testResults["negative1"] = result;
+        updateTestStatus("negative1", result.status === "Unexpected Result" ? "Fail" : result.status, result.description);
+      } catch (error) {
+        updateTestStatus("negative1", "Fail", error.message);
+      }
+    }
+
+    async function runNegativeTest2() {
+      updateTestStatus("negative2", "Running");
+      try {
+        const response = await fetch('/api/run-negative-test-2', { method: 'POST' });
+        const result = await response.json();
+        testResults["negative2"] = result;
+        updateTestStatus("negative2", result.status === "Unexpected Result" ? "Fail" : result.status, result.description);
+      } catch (error) {
+        updateTestStatus("negative2", "Fail", error.message);
+      }
+    }
+
+    async function runTestSuite() {
+      document.getElementById("test-status").textContent = "Running all tests...";
+      await runPositiveTest();
+      await runNegativeTest1();
+      await runNegativeTest2();
+      document.getElementById("test-status").textContent = "All tests completed.";
+    }
+
+    function exportCSV() {
+        const csvRows = [["Test Case Name", "Status", "Failed Steps", "Description"]];
+        for (const test of testCases) {
+            const result = testResults[test.id] || { status: "Not Started", description: "" };
+            const status = result.status === "Unexpected Result" ? "Fail" : result.status;
+            const description = result.description ? `"${result.description.replace(/"/g, '""')}"` : "No description available";
+            const failedSteps = result.status === "Fail" && description.includes("failed") ? description : "N/A";
+
+            csvRows.push([test.name, status, failedSteps, description]);
+        }
+        
+        const csvContent = "data:text/csv;charset=utf-8," + csvRows.map(row => row.join(",")).join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "test_results.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+  </script>
+</body>
+</html>
