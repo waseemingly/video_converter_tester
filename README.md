@@ -1,6 +1,6 @@
 # Automated Video Conversion Test Suite
 
-This project is an automated test suite for a video conversion website, utilizing Playwright for browser automation and OpenAI's API for generating descriptions of test results. The suite includes positive and negative test cases, with the option to export test results as a CSV file. The dashboard interface provides a simple way to initiate tests and monitor their statuses in real-time.
+This project is an automated test suite for a video conversion website, [video-converter.com](https://video-converter.com/), utilizing Playwright for browser automation and OpenAI's API for generating descriptions of test results. The suite includes positive and negative test cases, with the option to export test results as a CSV file. The dashboard interface provides a simple way to initiate tests and monitor their statuses in real-time.
 
 ## Table of Contents
 
@@ -31,6 +31,11 @@ OpenAI's API is integrated to provide AI-generated descriptions of test results,
 - **AI-Powered Result Descriptions**: Leverages OpenAI's API to generate detailed descriptions for test results.
 - **CSV Export**: Allows exporting of test results with descriptions to a CSV file for easy review and documentation.
 - **Dashboard Interface**: Provides a simple frontend to run individual test cases and view real-time results.
+- **WebVoyager Implementation**: Implements the [WebVoyager](https://github.com/langgraph/WebVoyager) approach on LangGraph for LLM-driven web navigation, allowing the use of AI to handle complex user interactions and navigate web elements efficiently.
+
+## How WebVoyager is Used
+
+This project leverages WebVoyager to perform LLM-assisted web navigation. WebVoyager is an implementation by LangGraph designed to streamline interactions on the web using Large Language Models (LLMs). It allows the system to interpret webpage elements dynamically, which reduces the dependency on strict CSS selectors or XPath for every interaction. By using WebVoyager, this project can navigate the test site more robustly, as it relies on bounding box annotations and LLM-generated actions to locate and interact with elements on the page.
 
 ---
 
@@ -135,33 +140,6 @@ To export test results as a CSV file:
 
 ---
 
-## Project Structure
-
-```plaintext
-your-repo-name/
-│
-├── app.py                  # Main backend application file (Flask server)
-├── index.html              # Frontend for test initiation and status display
-├── test_runner.py          # Core script with test case functions
-├── requirements.txt        # Required Python packages
-├── mark_page.js            # Script for annotating interactive elements
-├── .env                    # Environment file for storing OpenAI API key
-└── README.md               # Project documentation (this file)
-```
-
----
-
-## Evaluation Criteria
-
-1. **Code Quality and Organization**: Code should be clean, modular, and follow best practices.
-2. **Playwright Integration**: Effective use of Playwright for automating tests on the video conversion site.
-3. **Use of OpenAI API**: Proper integration and usage of OpenAI's API for generating test result descriptions.
-4. **CSV Export**: Implementation of CSV export with the correct format and fields.
-5. **Completeness and Time Management**: Ability to meet requirements within a given timeframe.
-6. **Explanation of Design Choices**: Clear and thoughtful design decisions, including potential improvements for future iterations.
-
----
-
 ## Potential Improvements
 
 - **Enhance Error Handling**: Refine error detection for more robust and specific handling of test failures.
@@ -171,5 +149,3 @@ your-repo-name/
 - **Result Storage**: Implement a database to log historical test results, enabling trend analysis and test reporting over time.
 
 ---
-
-Feel free to edit the instructions above to match any specifics of your project that might differ. Let me know if you have additional requirements or need more details!
