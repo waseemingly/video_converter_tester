@@ -44,10 +44,9 @@ This project leverages WebVoyager to perform LLM-assisted web navigation. WebVoy
 ### Prerequisites
 
 1. **Python 3.7+**
-2. **Node.js** (required by Playwright for browser control)
-3. **Playwright** (Python package)
-4. **OpenAI API Key** (needed for generating test descriptions using OpenAI's API)
-5. **Environment Variables**: `.env` file for storing your OpenAI API key
+2. **Playwright** (Python package)
+3. **OpenAI API Key** (needed for generating test descriptions using OpenAI's API)
+4. **Environment Variables**: `.env` file for storing your OpenAI API key
 
 ### Installation
 
