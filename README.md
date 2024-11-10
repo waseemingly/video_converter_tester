@@ -9,8 +9,8 @@ This project is an automated test suite for a video conversion website, [video-c
 - [Setup Instructions](#setup-instructions)
 - [Running the Tests](#running-the-tests)
 - [Exporting Results](#exporting-results)
-- [Project Structure](#project-structure)
-- [Evaluation Criteria](#evaluation-criteria)
+- [Considerations and Priorities](#considerations-and-priorities)
+- [Potential Improvements](#potential-improvements)
 
 ---
 
