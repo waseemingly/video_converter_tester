@@ -16,7 +16,7 @@
 <body>
   <div class="dashboard">
     <h1>Video Conversion Test Dashboard</h1>
-    <button class="button" onclick="runTestSuite()">Run Test Suite</button>
+    <!-- <button class="button" onclick="runTestSuite()">Run Test Suite</button> -->
     <button class="button" onclick="exportCSV()">Export Results as CSV</button>
     <table>
       <thead>
@@ -100,21 +100,21 @@
       }
     }
 
-    async function runTestSuite() {
-      document.getElementById("test-status").textContent = "Running all tests...";
-      await runPositiveTest();
-      await runNegativeTest1();
-      await runNegativeTest2();
-      document.getElementById("test-status").textContent = "All tests completed.";
-    }
+    // async function runTestSuite() {
+    //   document.getElementById("test-status").textContent = "Running all tests...";
+    //   await runPositiveTest();
+    //   await runNegativeTest1();
+    //   await runNegativeTest2();
+    //   document.getElementById("test-status").textContent = "All tests completed.";
+    // }
 
     function exportCSV() {
         const csvRows = [["Test Case Name", "Status", "Failed Steps", "Description"]];
         for (const test of testCases) {
-            const result = testResults[test.id] || { status: "Not Started", description: "" };
+            const result = testResults[test.id] || { status: "Not Started", description: "", failed_steps: "N/A" };
             const status = result.status === "Unexpected Result" ? "Fail" : result.status;
             const description = result.description ? `"${result.description.replace(/"/g, '""')}"` : "No description available";
-            const failedSteps = result.status === "Fail" && description.includes("failed") ? description : "N/A";
+            const failedSteps = result.failed_steps || "N/A"; 
 
             csvRows.push([test.name, status, failedSteps, description]);
         }
@@ -128,7 +128,6 @@
         link.click();
         document.body.removeChild(link);
     }
-
   </script>
 </body>
 </html>

@@ -1,34 +1,17 @@
 import asyncio
 from playwright.async_api import async_playwright
-import openai
+from openai import OpenAI
 from dotenv import load_dotenv
 import os
 
-# Load environment variables from .env file
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# Common function to annotate elements
 async def annotate_elements(page):
     with open("mark_page.js") as f:
         mark_page_script = f.read()
     return await page.evaluate(mark_page_script + "; markPage();")
 
-# Helper to generate test descriptions
-async def generate_test_description(test_name, status, error_message=None):
-    prompt = f"Provide a brief description for the test case '{test_name}' with status '{status}'."
-    if error_message:
-        prompt += f" Describe the reason for failure: {error_message.split(':')[0].strip()}."
-    response = await openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "system", "content": prompt}],
-        max_tokens=100
-    )
-    description = response['choices'][0]['message']['content'].strip()
-    failed_steps = description.split('.')[0] if status == "Fail" else "N/A"
-    return description, failed_steps
-
-# Positive Test Case
 async def run_positive_test():
     test_result = {
         "test_name": "Convert MP4 to AVI with HD 720p Resolution",
@@ -116,7 +99,6 @@ async def run_positive_test():
     
     return test_result
 
-# Negative Test Case 1
 async def run_negative_test_1():
     test_result = {
         "test_name": "Negative Test 1 - YouTube URL Upload",
@@ -180,7 +162,6 @@ async def run_negative_test_1():
     
     return test_result
 
-# Negative Test Case 2
 async def run_negative_test_2():
     test_result = {
         "test_name": "Negative Test 2 - Large File Upload",
@@ -222,21 +203,18 @@ async def run_negative_test_2():
     return test_result
 
 def generate_test_description(test_name, status, error_message=None):
-    # AI prompt for summary and failed steps
     prompt = f"Provide a brief description for the test case '{test_name}' with status '{status}'."
     if error_message:
-        # Extract a concise failure reason for "Failed Steps"
         prompt += f" Describe the reason for failure: {error_message.split(':')[0].strip()}."
 
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "system", "content": prompt}],
         max_tokens=100
     )
 
-    # Return separate values for description and failed steps
-    description = response['choices'][0]['message']['content'].strip()
-    failed_steps = description.split('.')[0] if status == "Fail" else "N/A"  # Extract first sentence for failed steps
+    description = response.choices[0].message.content.strip()
+
+    failed_steps = error_message.split(':')[0].strip() if "Fail" in status else "N/A"
 
     return description, failed_steps
-

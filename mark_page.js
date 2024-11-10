@@ -1,7 +1,6 @@
 let labels = [];
 
 function unmarkPage() {
-  // Unmark page logic
   for (const label of labels) {
     document.body.removeChild(label);
   }

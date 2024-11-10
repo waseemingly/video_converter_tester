@@ -140,11 +140,34 @@ To export test results as a CSV file:
 
 ---
 
+## Considerations and Priorities
+
+Initially, I approached element identification using CSS selectors to streamline interactions within the test cases. However, this approach proved ineffective due to the dynamic nature of the elements and the limitations of strict selectors. I then referred to the implementation of WebVoyager on LangGraph to enhance robustness in navigating the test site. This allowed for bounding box annotations and LLM-driven actions that could better adapt to changing or unpredictable UI components. This approach provided an advantage by reducing dependency on specific CSS selectors while using the `mark_page.js` for annotating elements.
+
+To improve annotation precision, I had to refine bounding boxes to ensure smaller areas were accurately captured, particularly for interactive elements that were not initially recognized. This adjustment significantly improved accuracy in capturing and interacting with essential UI components across the tests.
+
+For automation, I focused on using Playwright to manage web navigation across all test cases. For the positive test case, I was able to automate file upload for an MP4 less than 4GB, select AVI format, and choose the lowest HD setting (720p). However, the test encountered an obstacle with the "Convert" button, as the button either did not appear interactable immediately after processing or required an additional delay. To address this, I implemented scrolling and retry attempts to ensure the button was clicked, but I was unable to resolve it.
+
+Similarly, for Negative Test Case 2 (uploading a file exceeding 4GB), I automated the upload, but the test failed to detect the expected error message. Adjustments to handle this error state may involve additional wait times or checks after file uploads complete.
+
+For Negative Test Case 1, which involved uploading a YouTube URL, I faced challenges in handling the pop-up dialog box. The dialog box was not consistently captured by the bounding box approach, which made it difficult to programmatically enter the URL into the input field. I believe further fine-tuning with Playwright’s dialog handling features could support such interactions. With more time, I would focus on exploring Playwright's handling of dynamic elements and external dialogs within LangGraph to enhance test robustness and accuracy.
+
+In light of these technical challenges, I prioritised the following areas for completion:
+
+1.  **Use of OpenAI API for Result Descriptions**: I utilised OpenAI’s API to generate concise, descriptive summaries of each test result. The `generate_test_description` function uses error messages directly for failed steps and sends a prompt to OpenAI for an AI-generated description. This minimizes additional API calls for the failed steps, tying the generated summary closely to the actual error message.
+    
+2.  **CSV Export Implementation**: The CSV export function worked as intended, capturing the test case name, status (Success/Fail), failed steps, and AI-generated description of the result. This allowed for efficient reporting with columns as specified.
+    
+3.  **Dashboard Simplicity and Usability**: Given time constraints, I focused on creating a clean, simple dashboard interface with essential functionality, prioritizing backend processing and ensuring automated actions were thoroughly implemented.
+
+With additional time, I would focus on refining error handling within Playwright and expanding the interactions with pop-up dialogs to enhance automation reliability for dynamic UIs.
+
+---
+
 ## Potential Improvements
 
 - **Enhance Error Handling**: Refine error detection for more robust and specific handling of test failures.
 - **UI Enhancements**: Improve the dashboard interface with real-time updates and animations for better user experience.
-- **Additional Test Cases**: Extend the suite to cover more edge cases or variations of file types and sizes.
 - **Parallel Execution**: Modify the test runner to support parallel execution of test cases to save time.
 - **Result Storage**: Implement a database to log historical test results, enabling trend analysis and test reporting over time.
 
